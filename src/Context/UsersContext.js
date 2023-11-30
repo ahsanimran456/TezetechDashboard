@@ -49,11 +49,6 @@ function UserContext({ children }) {
         setUsers((prevUsers) => [...prevUsers, newUser]);
     }
 
-    useEffect(() => {
-        if (Users) {
-            console.log(Users);
-        }
-    }, [Users]);
     return (
         <MainAddUsersContext.Provider value={{ HandleUSer, Users }}>
             {children}

@@ -3,49 +3,32 @@ import React, { useContext, useEffect, useState } from "react";
 // import FormControl from "../components/form/FormControl";
 import * as yup from "yup";
 import { Link, useNavigate } from "react-router-dom";
-// import SubmitButton from "../components/SubmitButton";
-// import { toast } from "react-toastify";
-// import Loader from "../components/Loading";
-// import config from "../services/config.json";
-// import useFetch from "../customHooks/useFetch";
-// import LoaderForm from "../components/LoaderForm";
-import { Alert, Radio, notification } from "antd";
+
+import { Alert, Radio, Select, notification } from "antd";
 import FormControl from "../Components/FormControl";
 import { Switch } from 'antd';
 import Imageupload from "../Components/Imageupload";
 import SubmitButton from "../Components/Sumbitbtn";
 import { MainAddUsersContext } from "../Context/UsersContext";
-
+const { Option } = Select;
 function CreateUser() {
     const navigate = useNavigate();
     const { HandleUSer } = useContext(MainAddUsersContext);
     const [isLoading, setIsLoading] = useState(true);
     const [Userimg, setUserimg] = useState();
-    const [RoleList, setRoleList] = useState([
-        {
-            id: 1,
-            label: "Morning",
-
-        },
-        {
-            id: 2,
-            label: "Afternoon",
-
-        },
-        {
-            id: 3,
-            label: "Evening",
-
-        },
-    ]);
+    const [timing, settiming] = useState("Morning");
     const [RoleName, setRoleName] = useState("Student");
     const [Role, setRole] = useState(false);
+    const customDropdownRender = menu => (
+        <div>
+            {menu}
 
+        </div>
+    );
     const initialValues = {
         fname: "",
         email: "",
         number: "",
-        timing: "",
     };
 
     const [api, contextHolder] = notification.useNotification();
@@ -58,19 +41,22 @@ function CreateUser() {
         });
     };
     const handleSubmit = (values) => {
-        const Userobj = { ...values, RoleName, Userimg, Role };
+        const Userobj = { ...values, RoleName, Userimg, Role, timing };
+        console.log(Userobj);
         HandleUSer(Userobj)
         openNotificationWithIcon('success')
     };
 
+    const handleChange = (e) => {
+        settiming(e)
+    }
     const validationSchema = yup.object({
         fname: yup.string().required(< Alert message="First Name  is Required" type="warning" showIcon />),
-        // number: yup.string().required(< Alert message="Last Name  is Required" type="warning" showIcon />),
         number: yup.string()
-            .min(11, < Alert message="Number is incorrect" type="warning" />)
-            .max(11, < Alert message="Number is incorrect" type="warning" />)
+            .min(10, < Alert message="Number is  incorrect" type="warning" />)
+            .max(11, < Alert message="Number is  incorrect" type="warning" />)
             .required(< Alert message="Mobile number is required" type="warning" showIcon />),
-        timing: yup.string().required(< Alert message="Role  is Required" type="warning" showIcon />),
+        // timing: yup.string().required(< Alert message="Role  is Required" type="warning" showIcon />),
         email: yup.string().email(< Alert message="Invalid Email" type="error" showIcon />).required(< Alert message="Email is Required" type="warning" showIcon />),
     });
 
@@ -98,7 +84,7 @@ function CreateUser() {
             {contextHolder}
             <Formik
                 initialValues={initialValues}
-                // validationSchema={validationSchema}
+                validationSchema={validationSchema}
                 onSubmit={handleSubmit}
                 validateOnChange
             >
@@ -146,7 +132,7 @@ function CreateUser() {
                                             />
                                         </div>
                                         <div className="col-md-6 col-sm-12" >
-                                            <FormControl
+                                            {/* <FormControl
                                                 className="form-control my-1"
                                                 options="custom-select"
                                                 firstSelect={"--Select--"}
@@ -157,7 +143,46 @@ function CreateUser() {
                                                 control="select_custom_options"
                                                 custom_label_name="label"
                                                 customer_value_name="label"
-                                            />
+                                            /> */}
+                                            <span className="labeltext d-block mt-2">
+                                                Interview preferred time
+                                            </span>
+                                            {/* <Select
+                                                className="mt-2  input custom-select "
+                                                defaultValue="Category"
+                                                // onChange={handleChange}
+                                                options={[
+                                                    {
+                                                        value: "jack",
+                                                        label: "Jack",
+                                                    },
+                                                    {
+                                                        value: "Category",
+                                                        label: "Category",
+                                                    },
+                                                    {
+                                                        value: "Yiminghe",
+                                                        label: "yiminghe",
+                                                    },
+                                                ]}
+                                            /> */}
+                                            <Select
+                                                className="mt-2 input custom-select"
+                                                defaultValue="Morning"
+                                                onChange={handleChange}
+                                                optionLabelProp="label"
+                                                dropdownRender={customDropdownRender}
+                                            >
+                                                <Option value="Morning" label="Morning">
+                                                    <div className="optioncus">Morning</div>
+                                                </Option>
+                                                <Option value="Evening" label="Evening">
+                                                    <div className="optioncus">Evening</div>
+                                                </Option>
+                                                <Option value="Afternoon" label="Afternoon">
+                                                    <div className="optioncus">Afternoon</div>
+                                                </Option>
+                                            </Select>
                                         </div>
                                         <div className="col-md-6 col-sm-12 mt-3" >
                                             <Switch onChange={HandleRole} />&nbsp;&nbsp;
